@@ -44,6 +44,7 @@ exports.build = async function ({ cwd, out, options, reporter }) {
     'es2020',
     '--module',
     'esnext',
+    '--emitDeclarationOnly',
     '--sourceMap',
     'false',
     ...additionalArgs,
