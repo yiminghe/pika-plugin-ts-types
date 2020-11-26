@@ -62,7 +62,9 @@ exports.build = async function ({ cwd, out, options, reporter }) {
     console.log('');
     reporter.warning('npx tsc ' + args.join(' '));
     console.log('');
-    throw err;
+    if (!options.ignoreError) {
+      throw err;
+    }
   });
   reporter.created(path.join(out, 'dist-types', 'index.d.ts'), 'types');
 };
