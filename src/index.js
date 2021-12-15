@@ -35,7 +35,8 @@ exports.beforeJob = function ({ cwd }) {
 
 exports.build = async function ({ cwd, out, options, reporter }) {
   const additionalArgs = options.args || [];
-  const args = [
+  const yarn = options.yarn;
+  let args = [
     '-d',
     '--declarationDir',
     path.join(out, 'dist-types/'),
@@ -50,18 +51,20 @@ exports.build = async function ({ cwd, out, options, reporter }) {
     'false',
     ...additionalArgs,
   ];
+  const runner = yarn ? 'yarn' : getTscBin(cwd);
+  args = yarn ? ['run', 'tsc'].concat(args) : args;
   const result = execa(
-    getTscBin(cwd),
+    runner,
     args,
     { cwd },
   );
-  reporter.info('npx tsc ' + args.join(' '));
+  reporter.info('tsc ' + args.join(' '));
   result.stderr.pipe(process.stderr);
   result.stdout.pipe(process.stdout);
   await result.catch(err => {
     // Small formatting improvement.
     console.log('');
-    reporter.warning('npx tsc ' + args.join(' '));
+    reporter.warning('tsc ' + args.join(' '));
     console.log('');
     if (!options.ignoreError) {
       throw err;
